@@ -1,0 +1,48 @@
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+.content-container {
+	background-color: blue;
+	margin: auto;
+	margin-top: 10%;
+	width: 75%;
+	height: 70%;
+	transform: translateY(-10%);
+	align-content: center;
+	padding: 10px;
+	border: 2px solid black;
+	color: white;
+}
+
+.option-container {
+	background-color: #ccd6fc;
+	height: 85%;
+	top: 50%;
+	transform: translateY(-50%);
+	position: relative;
+	padding: 10px;
+	margin:  0 auto;
+	width: 90%;
+}
+
+.youtube-video {
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+
+#content-form {
+	text-align: center;
+	width: 80%;
+	align-content: center;
+	margin:  0 auto;
+}
+
+#content-url {
+	height: 100%;
+	width: 70%;
+}
