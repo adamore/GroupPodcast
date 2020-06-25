@@ -5,17 +5,14 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel = "stylesheet" href = "index.css">
 		<title>Group Podcast App</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 	</head>
 	<body>
 		<div class = "content-container">
-			<form id = "content-form" onsubmit="return false">
-				<label> Video url </label>
-				<input type="text" name="URL" id = "content-url">
-				<button type = "button" id = "getContent" onclick="return false"> Submit </button>
-			</form>
 			<div class = "option-container" id = "videoContainer">
+				<button id = "create-room"> Create Room </button>
 			</div>
 		</div>
 	</body>
-	<script src = "index.js"></script>
+	<script src = "./index.js"></script>
 </html>

@@ -39,10 +39,21 @@ html, body {
 	text-align: center;
 	width: 80%;
 	align-content: center;
-	margin:  0 auto;
+	margin: 0 auto;
 }
 
 #content-url {
 	height: 100%;
 	width: 70%;
+}
+
+#create-room {
+	width: 15%;
+	height: 10%;
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
 }
