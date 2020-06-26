@@ -107,13 +107,15 @@ socket.on('connect', function() {
     })
     socket.on('changeVideoTime', function(data) {
         console.log(`User changed video time tot ${data}.`);
-        player.seekTo(data);
+        if((userData.timestamp + 5 <= data && userData.timestamp - 5 <= data) || (userData.timestamp + 5 >= data && userData.timestamp - 5 >= data)){
+            player.seekTo(data);
+        }
 
     })
 
 });
 function checkTime() {
-    if(interval) {
+    if(interval || userData.timestamp) {
         console.log('Checking time.');
         var currTime = player.getCurrentTime();
         console.log(`User time ${currTime} old time ${userData.timestamp}`);
@@ -124,7 +126,12 @@ function checkTime() {
                 timestamp: currTime
             });
             userData.timestamp = currTime;
-            return true;
+            if(player.getPlayerState() == 1 && userData.playerState == 2){
+                return false;
+            }
+            else{
+                return true;
+            }
         }
         else {
             userData.timestamp = currTime;
@@ -245,65 +252,8 @@ function embedYoutube(vid) {
     player.cueVideoById({videoId: video_id});
 }
 
-//For reference video data template
-// var data = {
-//     room: roomNum,
-//     url: null,
-//     videoID: null,
-//     timestamp: null,
-//     playerState: null
-// }
-function synchronizeVideoData() {
-    //Youtube iframe api for player state
-        // -1 – unstarted
-        // 0 – ended
-        // 1 – playing
-        // 2 – paused
-        // 3 – buffering
-        // 5 – video cued
-        //Switch based on state of others videos in room
-            //Player state -1 ==> unstarted
-            //Player state 0 ==> ended
-                //Create player and load video
-                //Do not start video
-            //Player state 1 ==> playing
-            //Player state 3 ==> buffering
-            //Player state 5 ==> video cued
-                //Create player and load video
-                //Start video and go to timestamp and continue playing
-            //Player state 2 ==> paused
-                //Create player and load video
-                //Go to timestamp but do not play video
-    var playVID;
-    console.log(userData);
-    console.log("Syncing video time.");
-    switch (userData.playerState){
-        case null:
-        case -1:
-        case 0:
-        case 3:
-            break;
-        case 1:
-        case 3:
-        case 5:
-            console.log("Syncing video time.");
-            player.playVideo();
-            seek(userData.timestamp);
-            break;
-        case 2:
-            console.log("Playing video and changing time.");
-            player.playVideo();
-            seek(userData.timestamp);
-            player.stopVideo();
-            break;
-    }
-}
 function onPlayerReady(event) {
     //synchronizeVideoData(event);
-}
-
-function changeBorderColor(playerStatus) {
-
 }
 
 function onPlayerStateChange(event) {
@@ -312,25 +262,28 @@ function onPlayerStateChange(event) {
         console.log('Video is buffering.');
         return;
     }
+    console.log(`Player state chage to ${player.getPlayerState()} from ${userData.playerState}.`);
     if(event.data != userData.playerState && event.data != -1) {
-        userData.playerState = player.getPlayerState();
+        console.log('User player state does not match current state.');
         if(!checkTime()) { 
-            console.log(`Emitting a change of state to ${userData.playerState}.`);       
+            userData.playerState = player.getPlayerState(); 
+            console.log(`Emitting a change of state to ${userData.playerState}.`);   
             socket.emit('changeVideoState', {
                     roomNum: userData.roomNum,
                     playerState: userData.playerState
             });
         }
+        else{
+            if(userData.playerState == 1){
+                player.playVideo();
+                return;
+            }
+            userData.playerState = player.getPlayerState();
+        }
         if(!interval && userData.playerState == 1){
             console.log('Setting interval.');
             userData.timestamp = player.getCurrentTime();
-            if(!interval) {
-                interval = setInterval(checkTime, 3000);
-            }
-            else {
-                clearInterval(interval);
-                interval = setInterval(checkTime, 3000);
-            }
+            interval = setInterval(checkTime, 3000);
         }
         else if(interval && userData.playerState != 1) {
             console.log('Clearing interval');
